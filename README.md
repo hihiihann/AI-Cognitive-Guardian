@@ -5,10 +5,6 @@
 
 ACG là một **Chrome Extension** can thiệp hành vi ngay tại điểm bạn gõ prompt — **trước khi AI trả lời** — nhằm kích hoạt tư duy độc lập và ngăn chặn sự lệ thuộc nhận thức vào AI.
 
-<img width="465" height="392" alt="Picture 1" src="https://github.com/user-attachments/assets/dfe3258c-524b-4e2a-b545-f34c0e7e58ff" />
-<img width="435" height="486" alt="Picture 2" src="https://github.com/user-attachments/assets/b678f0c1-48fc-404f-8365-52ea78532bfd" />
-
-
 ---
 
 ## Mục lục
