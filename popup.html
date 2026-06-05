@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>AI Cognitive Guardian</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --white:#ffffff; --bg:#f0f7ff; --bg2:#f8faff;
+      --border:#d0e4fa; --border-sm:#e0eaf4;
+      --blue:#3b6ee8; --blue-dark:#2d5ed4; --blue-bg:#eef4fd;
+      --navy:#0f2744; --gray-900:#1e293b; --gray-600:#475569;
+      --gray-400:#94a3b8; --gray-200:#e2e8f0;
+      --green:#22c55e; --orange:#f97316; --red:#ef4444; --purple:#8b5cf6;
+    }
+    html { width: 600px; }
+    body {
+      width: 600px; min-height: 480px;
+      background: linear-gradient(160deg, #dbeafe 0%, #e0f2fe 40%, #f0fdf4 100%);
+      color: var(--navy); font-family: 'Outfit', sans-serif; font-size: 14px;
+    }
+    #acg-two-col { display: flex; min-height: 480px; }
+    #acg-left-col {
+      width: 258px; flex-shrink: 0; background: var(--white);
+      border-right: 1px solid var(--border-sm);
+      display: flex; flex-direction: column; overflow-y: auto;
+    }
+    #acg-right-col { flex: 1; display: flex; flex-direction: column; background: transparent; }
+
+    /* Header */
+    .header { padding: 13px 15px 11px; background: linear-gradient(135deg, #f0f7ff 0%, #fff 60%); border-bottom: 1px solid var(--border-sm); }
+    .logo-row { display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 8px; }
+    .logo svg { flex-shrink: 0; display: block; }
+    .logo-text { font-weight: 700; font-size: 12.5px; color: var(--navy); letter-spacing: -.02em; line-height: 1.2; }
+    .logo-sub  { font-size: 9px; color: var(--gray-400); }
+    .v2-badge  { display: inline-flex; font-size: 8.5px; font-weight: 700; background: var(--blue-bg); color: var(--blue); padding: 1px 6px; border-radius: 4px; margin-left: 4px; vertical-align: middle; }
+    .toggle-wrap { display: flex; align-items: center; gap: 6px; }
+    .toggle-label { font-size: 9.5px; color: var(--gray-400); font-weight: 600; }
+    .toggle { position: relative; width: 33px; height: 18px; cursor: pointer; }
+    .toggle input { display: none; }
+    .toggle-track { position: absolute; inset: 0; background: var(--gray-200); border-radius: 100px; transition: background .2s; }
+    .toggle input:checked + .toggle-track { background: var(--blue); }
+    .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: white; border-radius: 50%; transition: transform .2s; pointer-events: none; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(15px); }
+
+    /* Score */
+    .score-card { margin: 11px 12px 0; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 14px; padding: 12px 14px; }
+    .section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--gray-400); margin-bottom: 6px; }
+    .score-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
+    .score-number { font-weight: 800; font-size: 40px; line-height: 1; color: var(--navy); }
+    .score-badge { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
+    .badge-healthy  { background: #dcfce7; color: #15803d; }
+    .badge-moderate { background: #fef9c3; color: #a16207; }
+    .badge-high     { background: #ffedd5; color: #c2410c; }
+    .badge-critical { background: #fee2e2; color: #b91c1c; }
+    .score-bar-bg   { height: 5px; background: var(--border-sm); border-radius: 100px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 100px; background: var(--blue); transition: width .6s cubic-bezier(.16,1,.3,1); width: 0%; }
+
+    /* Bloom track */
+    .bloom-track-section { margin: 10px 12px 0; }
+    .bloom-track-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--gray-400); margin-bottom: 6px; }
+    .bloom-segments { display: flex; gap: 3px; }
+    .bloom-seg { flex: 1; height: 5px; border-radius: 100px; background: var(--border-sm); transition: background .3s; }
+    .bloom-seg-labels { display: flex; gap: 3px; margin-top: 4px; }
+    .bloom-seg-label { flex: 1; font-size: 7.5px; text-align: center; color: var(--gray-400); font-weight: 600; }
+
+    /* Stats */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 12px 0; }
+    .stat-box { background: var(--white); border: 1.5px solid var(--border-sm); border-radius: 11px; padding: 9px 10px 8px; }
+    .stat-box-top { display: flex; align-items: center; gap: 5px; margin-bottom: 2px; }
+    .stat-box-num { font-weight: 800; font-size: 20px; color: var(--navy); line-height: 1; }
+    .stat-box-label { font-size: 8.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-400); font-weight: 600; }
+
+    /* Insight */
+    .insight { margin: 9px 12px 0; background: var(--white); border: 1.5px solid var(--border); border-left: 3px solid var(--blue); border-radius: 11px; padding: 9px 12px; font-size: 11px; color: var(--gray-600); line-height: 1.6; }
+    .insight strong { color: var(--navy); font-weight: 700; }
+
+    /* XP widget */
+    .xp-card { margin: 10px 12px 0; background: var(--white); border: 1.5px solid var(--border-sm); border-radius: 14px; padding: 11px 13px; }
+    .xp-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 9px; }
+    .xp-section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--gray-400); margin-bottom: 3px; }
+    .xp-level-name { font-size: 18px; font-weight: 800; color: var(--navy); letter-spacing: -.02em; }
+    .xp-total-wrap { display: flex; align-items: baseline; gap: 2px; }
+    .xp-star { font-size: 13px; color: #b45309; }
+    .xp-total { font-size: 22px; font-weight: 800; color: #92400e; line-height: 1; }
+    .xp-unit { font-size: 10px; font-weight: 700; color: #b45309; }
+    .xp-bar-bg { height: 6px; background: var(--gray-200); border-radius: 100px; overflow: hidden; margin-bottom: 4px; }
+    .xp-bar-fill { height: 100%; border-radius: 100px; transition: width .6s cubic-bezier(.16,1,.3,1); }
+    .xp-bar-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--gray-400); font-weight: 600; margin-bottom: 9px; }
+    .xp-levels-row { display: flex; gap: 4px; flex-wrap: wrap; }
+    .xp-lvl-pip { font-size: 8.5px; font-weight: 700; padding: 2px 7px; border-radius: 20px; opacity: .45; }
+    .xp-lvl-pip.active { opacity: 1; }
+
+    /* API */
+    .api-section { margin: 9px 12px 0; background: var(--white); border: 1.5px solid var(--border-sm); border-radius: 11px; padding: 9px 12px; }
+    .api-row { display: flex; align-items: center; justify-content: space-between; }
+    .api-status { font-size: 11px; font-weight: 600; color: var(--gray-600); }
+    .api-toggle { background: var(--white); border: 1.5px solid var(--border); color: var(--blue); font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; cursor: pointer; font-family: 'Outfit', sans-serif; }
+    .api-toggle:hover { background: var(--blue-bg); }
+    .api-input-row { display: flex; gap: 6px; margin-top: 8px; }
+    .api-input-row input { flex: 1; background: var(--bg); border: 1.5px solid var(--border); color: var(--navy); font-size: 11px; font-family: 'Outfit', sans-serif; padding: 5px 9px; border-radius: 8px; outline: none; }
+    .api-input-row input:focus { border-color: var(--blue); }
+    .api-input-row button { background: var(--blue); border: none; color: white; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 8px; cursor: pointer; font-family: 'Outfit', sans-serif; }
+    .api-hint { font-size: 9.5px; color: var(--gray-400); margin-top: 5px; font-style: italic; }
+
+    /* Footer */
+    .footer { margin: 9px 12px 12px; display: flex; gap: 6px; align-items: center; }
+    .btn-reset { background: var(--white); border: 1.5px solid var(--border-sm); color: var(--gray-400); font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 600; padding: 7px 12px; border-radius: 100px; cursor: pointer; transition: all .18s; }
+    .btn-reset:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-tagline { font-size: 8.5px; color: var(--gray-400); font-style: italic; text-align: right; line-height: 1.55; flex: 1; border: none; background: none; cursor: default; padding: 0; }
+
+    /* History */
+    #history-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px 10px; background: rgba(255,255,255,.7); border-bottom: 1px solid rgba(208,228,250,.6); }
+    #history-title { font-weight: 700; font-size: 12.5px; color: var(--navy); letter-spacing: -.01em; }
+    #history-clear-btn { background: rgba(255,255,255,.8); border: 1.5px solid var(--border); color: var(--gray-400); font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 100px; cursor: pointer; font-family: 'Outfit', sans-serif; }
+    #history-clear-btn:hover { border-color: var(--red); color: var(--red); }
+    #history-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+    #history-list::-webkit-scrollbar { width: 3px; }
+    #history-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .history-empty { font-size: 11.5px; color: var(--gray-400); text-align: center; padding: 36px 14px; line-height: 1.9; }
+    .history-card { background: rgba(255,255,255,.85); border: 1.5px solid var(--border-sm); border-radius: 13px; padding: 10px 12px; position: relative; overflow: hidden; transition: box-shadow .2s, transform .18s; }
+    .history-card:hover { box-shadow: 0 4px 16px rgba(59,110,232,.1); transform: translateY(-1px); }
+    .history-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 3px 0 0 3px; }
+    .history-card.thinkfirst::before { background: var(--blue); }
+    .history-card.essay::before { background: var(--purple); }
+    .history-card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .history-card-mode { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    .history-card-mode.thinkfirst { color: var(--blue); }
+    .history-card-mode.essay { color: var(--purple); }
+    .history-card-time { font-size: 9px; color: var(--gray-400); }
+    .history-card-prompt { font-size: 12px; color: var(--navy); font-weight: 600; margin-bottom: 4px; white-space: normal; overflow: visible; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .history-card-answer { font-size: 11px; color: var(--gray-600); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .history-card-footer { margin-top: 7px; }
+    .history-card-bloom { display: inline-flex; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 100px; text-transform: uppercase; letter-spacing: .05em; }
+    .history-card-bloom.remember   { background: #f1f5f9; color: #64748b; }
+    .history-card-bloom.understand { background: #dbeafe; color: #1d4ed8; }
+    .history-card-bloom.apply      { background: #dcfce7; color: #15803d; }
+    .history-card-bloom.analyze    { background: #ffedd5; color: #c2410c; }
+    .history-card-bloom.evaluate   { background: #fce7f3; color: #be185d; }
+    .history-card-bloom.create     { background: #ede9fe; color: #6d28d9; }
+
+    /* Accordion header */
+    .hcard-header { padding-bottom: 2px; }
+    .hcard-chevron { font-size: 10px; color: #94a3b8; flex-shrink: 0; transition: transform .2s; }
+    .history-card-prompt { white-space: normal; overflow: visible; word-break: break-word; font-weight: 600; font-size: 12px; color: var(--navy); flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+    /* Expansion section */
+    .hcard-expansion { margin-top: 10px; padding: 10px 11px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 9px; }
+    .hcard-exp-title { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #94a3b8; margin-bottom: 5px; }
+    .hcard-exp-summary { font-size: 11px; color: var(--gray-600); line-height: 1.5; margin-bottom: 6px; font-style: italic; }
+    .hcard-exp-points { padding-left: 14px; margin-bottom: 6px; }
+    .hcard-exp-points li { font-size: 11px; color: var(--navy); line-height: 1.6; margin-bottom: 2px; font-weight: 500; }
+    .hcard-exp-q { font-size: 11px; color: #3b6ee8; font-weight: 600; font-style: italic; border-left: 2.5px solid #3b6ee8; padding-left: 8px; margin-top: 6px; }
+
+    /* Dropdown hover states */
+    .acg-dd-item:hover { background: #f0f7ff; }
+    .acg-bloom-dd-item:hover { background: #f0f7ff; }
+  </style>
+</head>
+<body>
+<div id="acg-two-col">
+  <div id="acg-left-col">
+    <div class="header">
+      <div class="logo-row">
+        <div class="logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rays -->
+  <line x1="12" y1="1" x2="12" y2="3.5" stroke="#0f2744" stroke-width="2" stroke-linecap="round"/>
+  <line x1="19.07" y1="3.34" x2="17.48" y2="4.93" stroke="#0f2744" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="11" x2="19.5" y2="11" stroke="#0f2744" stroke-width="2" stroke-linecap="round"/>
+  <line x1="19.07" y1="18.66" x2="17.48" y2="17.07" stroke="#0f2744" stroke-width="2" stroke-linecap="round"/>
+  <line x1="4.93" y1="3.34" x2="6.52" y2="4.93" stroke="#0f2744" stroke-width="2" stroke-linecap="round"/>
+  <line x1="2" y1="11" x2="4.5" y2="11" stroke="#0f2744" stroke-width="2" stroke-linecap="round"/>
+  <line x1="4.93" y1="18.66" x2="6.52" y2="17.07" stroke="#0f2744" stroke-width="2" stroke-linecap="round"/>
+  <!-- Bulb -->
+  <path d="M9 21h6M10 18h4M8.5 14.5C7 13.3 6 11.76 6 10a6 6 0 1 1 12 0c0 1.76-1 3.3-2.5 4.5V16a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1.5z" stroke="#0f2744" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Filament -->
+  <path d="M10.5 10.5 L12 9 L13.5 10.5" stroke="#0f2744" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
+          <div>
+            <div class="logo-text">Cognitive Guardian <span class="v2-badge">v3</span></div>
+            <div class="logo-sub">Protecting your thinking</div>
+          </div>
+        </div>
+        <div class="toggle-wrap">
+          <span class="toggle-label" id="toggle-label">ON</span>
+          <label class="toggle">
+            <input type="checkbox" id="guardian-toggle" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-card">
+      <div class="section-label">Dependency Score</div>
+      <div class="score-row">
+        <div class="score-number" id="score-num">0</div>
+        <span class="score-badge badge-healthy" id="score-badge">Healthy</span>
+      </div>
+      <div class="score-bar-bg"><div class="score-bar-fill" id="score-bar"></div></div>
+    </div>
+
+    <!-- XP + Thinking Level widget -->
+    <div class="xp-card" id="xp-card">
+      <div class="xp-top-row">
+        <div>
+          <div class="xp-section-label">Thinking level</div>
+          <div class="xp-level-name" id="xp-level-name">Remember</div>
+        </div>
+        <div class="xp-total-wrap">
+          <span class="xp-star">★</span>
+          <span class="xp-total" id="xp-total">0</span>
+          <span class="xp-unit">XP</span>
+        </div>
+      </div>
+      <div class="xp-bar-bg">
+        <div class="xp-bar-fill" id="xp-bar-fill"></div>
+      </div>
+      <div class="xp-bar-labels">
+        <span id="xp-bar-cur">0 XP</span>
+        <span id="xp-bar-next">to Understand: 50 XP</span>
+      </div>
+      <div class="xp-levels-row" id="xp-levels-row"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-box-top"><span class="stat-box-num" id="stat-requests">0</span></div>
+        <div class="stat-box-label">AI Requests</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-top"><span class="stat-box-num" id="stat-guided">0</span></div>
+        <div class="stat-box-label">Guided</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-top"><span class="stat-box-num" id="stat-essay">0</span></div>
+        <div class="stat-box-label">Essay Mode</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-top"><span class="stat-box-num" id="stat-tf">0</span></div>
+        <div class="stat-box-label">Think First</div>
+      </div>
+      <div class="stat-box" style="grid-column:span 2;">
+        <div class="stat-box-top"><span class="stat-box-num" id="stat-streak" style="font-size:18px;">1</span></div>
+        <div class="stat-box-label">Day Streak</div>
+      </div>
+    </div>
+
+    <div class="insight" id="insight-text">
+      Start using ChatGPT — Guardian will track your <strong>cognitive patterns</strong>.
+    </div>
+
+    <div class="api-section" id="api-section">
+      <div class="api-row">
+        <span class="api-status" id="api-status">No API key</span>
+        <button class="api-toggle" id="api-toggle">Set key</button>
+      </div>
+      <div class="api-input-row" id="api-input-row" style="display:none;">
+        <input type="password" id="api-key-input" placeholder="gsk_..."/>
+        <button id="api-save-btn">Save</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
+        <div class="api-hint" id="api-hint" style="flex:1;">Groq API key (free at console.groq.com) — AI scaffold + Bloom scoring</div>
+        <button id="api-test-btn" style="background:#f1f5f9;border:1px solid #e2e8f0;color:#64748b;font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap;">Test</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-reset" id="btn-reset">Reset</button>
+      <button class="btn-reset" id="btn-export" style="border-color:rgba(59,110,232,.3);color:#3b6ee8;">Export</button>
+      <div class="btn-tagline">"The biggest risk of AI<br>is thinking loss."</div>
+    </div>
+  </div>
+
+  <div id="acg-right-col">
+    <div id="history-header">
+      <span id="history-title">Thinking History</span>
+      <button id="history-clear-btn">Clear all</button>
+    </div>
+    <div id="history-list">
+      <div class="history-empty">No sessions yet.<br>Complete a session to see it here.</div>
+    </div>
+  </div>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>
